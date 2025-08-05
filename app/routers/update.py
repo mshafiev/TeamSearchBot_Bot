@@ -40,9 +40,18 @@ async def update_profile(callback_query: CallbackQuery, state: FSMContext, bot: 
     await bot.edit_message_reply_markup(
         chat_id=callback_query.message.chat.id,
         message_id=callback_query.message.message_id,
-        reply_markup=kb.my_profile_edit_profile
+        reply_markup=kb.my_profile_edit_olymps
     )
     
+@router.callback_query(F.data == "update_back")
+async def update_back(callback_query: CallbackQuery, state: FSMContext, bot: Bot):
+    """Назад"""
+    await bot.edit_message_reply_markup(
+        chat_id=callback_query.message.chat.id,
+        message_id=callback_query.message.message_id,
+        reply_markup=kb.my_profile_main
+    )
+
 @router.callback_query(F.data == "update_profile_update_first_name")
 async def update_first_name_callback(callback_query: CallbackQuery, state: FSMContext):
     await state.set_state(st.Registration.first_name)

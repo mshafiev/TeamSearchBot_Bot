@@ -63,12 +63,14 @@ my_profile_edit_profile = InlineKeyboardMarkup(
         [InlineKeyboardButton(text="Дата рождения", callback_data="update_profile_update_date_of_birth")],
         [InlineKeyboardButton(text="Селфи (фото лица)", callback_data="update_profile_update_face_photo")],
         [InlineKeyboardButton(text="Доп. фото", callback_data="update_profile_update_photo")],
+        [InlineKeyboardButton(text="Назад", callback_data="update_back")],
     ]
 )
 
-my_profile_main = InlineKeyboardMarkup(
+my_profile_edit_olymps = InlineKeyboardMarkup(
     inline_keyboard=[
         [InlineKeyboardButton(text="Добавить РСОШ/ВСОШ (авто)", callback_data="update_olymps_add_auto")],
         [InlineKeyboardButton(text="Добавить другую олимпиаду", callback_data="update_olymps_add_other")],
         [InlineKeyboardButton(text="Изменить видимость олимпиад", callback_data="update_olymps_update_visibility")],
+        [InlineKeyboardButton(text="Назад", callback_data="update_back")],
                      ])
