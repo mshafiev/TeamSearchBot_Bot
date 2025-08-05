@@ -17,6 +17,23 @@ import app.keyboards as kb
 import api_client as api
 import app.keyboards as kb
 
+register_fields = [
+                ("first_name", st.Registration.first_name, "Как тебя зовут? (Имя)", kb.ReplyKeyboardRemove()),
+                ("last_name", st.Registration.last_name, "Ваша фамилия?", kb.ReplyKeyboardRemove()),
+                ("middle_name", st.Registration.middle_name, "Ваше отчество? (Если нет — напишите 'нет')", kb.ReplyKeyboardRemove()),
+                ("phone", st.Registration.phone, "Ваш номер телефона?", kb.get_number),
+                ("age", st.Registration.age, "Сколько вам лет?", kb.ReplyKeyboardRemove()),
+                ("city", st.Registration.city, "В каком городе вы живёте?", kb.ReplyKeyboardRemove()),
+                ("status", st.Registration.status, "Ваш статус: 0 — свободен, 1 — в отношениях", kb.wife_status),
+                ("goal", st.Registration.goal, "Ваша цель: 0 — совместный бот, 1 — общение, 2 — поиск команды, 3 — отношения", kb.goal),
+                ("who_interested", st.Registration.who_interested, "Кто вам интересен: 0 — девушки, 1 — парни, 2 — все", kb.who_interested),
+                ("description", st.Registration.description, "Описание для профиля (например ищу девушку блондинку)", kb.ReplyKeyboardRemove()),
+                ("date_of_birth", st.Registration.date_of_birth, "Ваша дата рождения (ДД-ММ-ГГГГ)", kb.ReplyKeyboardRemove()),
+                ("face_photo_id", st.Registration.face_photo, "Пожалуйста, отправьте селфи (фото лица)", kb.ReplyKeyboardRemove()),
+                ("photo_id", st.Registration.photo, "Пожалуйста, отправьте дополнительное фото", kb.ReplyKeyboardRemove()),
+            ]
+
+
 async def get_user_profile(user):
     # Формируем основной caption профиля
     caption = f"{html.bold(user.get('first_name', 'Не указано'))}, {user.get('age', 'Не указано')}, {user.get('city', 'Не указано')} - {user.get('description', 'Не указано')}"
@@ -71,23 +88,7 @@ async def get_user_profile(user):
 async def update_user_data(user, message: Message, state: FSMContext, bot: Bot):
     print(user)
     if any(value is None for value in user.values()):
-            # Определяем, какие поля не заполнены, и назначаем соответствующий стейт
-            fields = [
-                ("first_name", st.Registration.first_name, "Как тебя зовут? (Имя)", kb.ReplyKeyboardRemove()),
-                ("last_name", st.Registration.last_name, "Ваша фамилия?", kb.ReplyKeyboardRemove()),
-                ("middle_name", st.Registration.middle_name, "Ваше отчество? (Если нет — напишите 'нет')", kb.ReplyKeyboardRemove()),
-                ("phone", st.Registration.phone, "Ваш номер телефона?", kb.get_number),
-                ("age", st.Registration.age, "Сколько вам лет?", kb.ReplyKeyboardRemove()),
-                ("city", st.Registration.city, "В каком городе вы живёте?", kb.ReplyKeyboardRemove()),
-                ("status", st.Registration.status, "Ваш статус: 0 — свободен, 1 — в отношениях", kb.wife_status),
-                ("goal", st.Registration.goal, "Ваша цель: 0 — совместный бот, 1 — общение, 2 — поиск команды, 3 — отношения", kb.goal),
-                ("who_interested", st.Registration.who_interested, "Кто вам интересен: 0 — девушки, 1 — парни, 2 — все", kb.who_interested),
-                ("description", st.Registration.description, "Описание для профиля (например ищу девушку блондинку)", kb.ReplyKeyboardRemove()),
-                ("date_of_birth", st.Registration.date_of_birth, "Ваша дата рождения (ДД-ММ-ГГГГ)", kb.ReplyKeyboardRemove()),
-                ("face_photo_id", st.Registration.face_photo, "Пожалуйста, отправьте селфи (фото лица)", kb.ReplyKeyboardRemove()),
-                ("photo_id", st.Registration.photo, "Пожалуйста, отправьте дополнительное фото", kb.ReplyKeyboardRemove()),
-            ]
-            for field, state_field, text, kb_field in fields:
+            for field, state_field, text, kb_field in register_fields:
                 if user.get(field) is None:
                     await state.set_state(state_field)
                     await message.answer(f"{text}", reply_markup=kb_field)
@@ -107,4 +108,16 @@ async def send_user_profile(user, message: Message, bot: Bot):
         reply_markup=kb.main
     )
    
-    
+async def send_message_by_tag(tag, message: Message, state: FSMContext):
+    """
+    Отправляет сообщение пользователю по тегу из register_fields.
+    :param tag: str - тег (название поля) из register_fields
+    :param message: Message - объект сообщения
+    :param state: FSMContext - состояние пользователя
+    """
+    for field, state_field, text, kb_field in register_fields:
+        if field == tag:
+            await state.set_state(state_field)
+            await message.answer(f"{text}", reply_markup=kb_field)
+            return
+    await message.answer("Не удалось найти поле для изменения.", reply_markup=kb.main)
