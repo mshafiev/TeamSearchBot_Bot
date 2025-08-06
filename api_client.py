@@ -137,28 +137,18 @@ class APIClient:
         }
         return self._make_request("POST", "/olymp/create/", data=data)
     
-    def set_olymp_display(self, olymp_data: OlympsData) -> Dict[str, Any]:
+    def set_olymp_display(self, olymp_id: int) -> Dict[str, Any]:
         """
-        Установить флаг отображения олимпиады
-        
+        Установить флаг отображения олимпиады (is_displayed)
+
         Args:
-            olymp_data: Данные олимпиады (используются user_tg_id, name, year, profile, is_displayed)
-            
+            olymp_id: ID олимпиады
+
         Returns:
             Обновлённая запись олимпиады
         """
-        data = {
-            "name": olymp_data.name,
-            "profile": olymp_data.profile,
-            "level": olymp_data.level,
-            "user_tg_id": olymp_data.user_tg_id,
-            "result": olymp_data.result,
-            "year": olymp_data.year,
-            "is_approved": olymp_data.is_approved,
-            "is_displayed": olymp_data.is_displayed
-        }
-        return self._make_request("POST", "/olymp/set_display/", data=data)
-    
+        return self._make_request("POST", f"/olymp/set_display/?olymp_id={olymp_id}")
+
     def delete_olymp(self, olymp_id: int) -> Dict[str, Any]:
         """
         Удалить олимпиаду по ID
@@ -315,26 +305,26 @@ client = APIClient(f"http://{DB_SERVER_HOST}:{DB_SERVER_PORT}")
 
 # Примеры использования
 if __name__ == "__main__":
-    # try:
-    #     result = client.create_olymp(OlympsData(
-    #         user_tg_id=1008114047,
-    #         name = "НТО",
-    #         profile = "БДИМО",
-    #         level = 3,
-    #         result = 2,
-    #         year = "2024",
-    #         is_approved = True,
-    #         is_displayed = True
-    #     ))
-    #     print(result)
-    # except Exception as e:
-    #     print(e)
-    
     try:
-        result = client.get_user(tg_id=1008114047)
+        result = client.create_olymp(OlympsData(
+            user_tg_id=1008114047,
+            name = "НТО",
+            profile = "БДИМО",
+            level = 3,
+            result = 2,
+            year = "2024",
+            is_approved = True,
+            is_displayed = False
+        ))
         print(result)
     except Exception as e:
         print(e)
+    
+    # try:
+    #     result = client.get_user(tg_id=1008114047)
+    #     print(result)
+    # except Exception as e:
+    #     print(e)
         
     # client.update_user(
     #         UserData(

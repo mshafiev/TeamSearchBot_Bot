@@ -7,7 +7,7 @@ start_without_all_fields = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text='�
 start_reg = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text='Заполнить анкету')],
                                      ], resize_keyboard=True, input_field_placeholder="Заполните анкету для использования бота")
 
-main = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text='Смотреть анкеты 🚀'), KeyboardButton(text='Редактировать профиль')],
+main = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text='Смотреть анкеты 🚀'), KeyboardButton(text='2 👤'), KeyboardButton(text='3 ✏️')],
                                      ], resize_keyboard=True)
 
 get_number = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text='Отправить телефон', request_contact=True)],

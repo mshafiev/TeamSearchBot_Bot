@@ -18,7 +18,12 @@ from api_client import client, UserData
 
 router = Router()
 
-@router.message(F.text.lower() == "редактировать профиль")
+@router.message(F.text.lower() == "2 👤")
+async def edit_profile_message(message: Message, state: FSMContext, bot: Bot):
+    user = client.get_user(tg_id=message.from_user.id)
+    await func.send_user_profile(user,message, bot)
+    
+@router.message(F.text.lower() == "3 ✏️")
 async def edit_profile_message(message: Message, state: FSMContext):
     await message.answer(
         "Редактировать профиль",
@@ -46,11 +51,10 @@ async def update_profile(callback_query: CallbackQuery, state: FSMContext, bot: 
 @router.callback_query(F.data == "update_back")
 async def update_back(callback_query: CallbackQuery, state: FSMContext, bot: Bot):
     """Назад"""
-    await bot.edit_message_reply_markup(
-        chat_id=callback_query.message.chat.id,
-        message_id=callback_query.message.message_id,
-        reply_markup=kb.my_profile_main
-    )
+    await callback_query.message.edit_text("Редактировать профиль:", reply_markup=kb.my_profile_main)
+
+
+# ------- Профиль -------
 
 @router.callback_query(F.data == "update_profile_update_first_name")
 async def update_first_name_callback(callback_query: CallbackQuery, state: FSMContext):
@@ -130,3 +134,42 @@ async def update_photo_callback(callback_query: CallbackQuery, state: FSMContext
     await func.send_message_by_tag("photo_id", callback_query.message, state)
     await callback_query.answer("Изменение дополнительного фото")
 
+# ------- Олимпиады -------
+
+@router.callback_query(F.data == "update_olymps_add_auto")
+async def add_olymp_auto(callback_query: CallbackQuery, state: FSMContext):
+    await callback_query.answer("Проверка началась, обычно это длится пару минут. Мы напишем вам как только закончим")
+    
+    
+@router.callback_query(F.data == "update_olymps_add_other")
+async def add_olymp_other(callback_query: CallbackQuery, state: FSMContext):
+    await callback_query.answer("Пока не реализовано")
+    
+@router.callback_query(F.data == "update_olymps_update_visibility")
+async def update_olymp_visibility(callback_query: CallbackQuery, state: FSMContext):
+    user_id = callback_query.from_user.id
+    user = client.get_user(user_id)
+    olymp_buttons = await func.make_olymp_buttons(user)
+    
+    keyboard = types.InlineKeyboardMarkup(inline_keyboard=olymp_buttons)
+    await callback_query.message.edit_text("Ваши олимпиады:", reply_markup=keyboard)
+
+@router.callback_query(F.data == "update_olymps_visibility_back")
+async def update_olymp_visibility_back(callback_query: CallbackQuery, state: FSMContext):
+    await callback_query.message.edit_text("Меню олимпиад:", reply_markup=kb.my_profile_edit_olymps)
+    await callback_query.answer("Вы вернулись в меню олимпиад")
+
+
+@router.callback_query(F.data.startswith("toggle_olymp_visibility_"))
+async def toggle_olymp_visibility_callback(callback_query: CallbackQuery, state: FSMContext):
+    olymp_id = callback_query.data.replace("toggle_olymp_visibility_", "")
+    user_id = callback_query.from_user.id
+
+    result = client.set_olymp_display(olymp_id)
+
+    # Обновляем список олимпиад
+    user = client.get_user(user_id)
+    olymp_buttons = await func.make_olymp_buttons(user)
+    
+    keyboard = types.InlineKeyboardMarkup(inline_keyboard=olymp_buttons)
+    await callback_query.message.edit_text("Ваши олимпиады:", reply_markup=keyboard)

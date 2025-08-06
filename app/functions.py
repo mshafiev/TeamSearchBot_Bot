@@ -104,7 +104,7 @@ async def send_user_profile(user, message: Message, bot: Bot):
     
     await bot.send_media_group(chat_id=message.chat.id, media=media_group.build())
     await message.answer(
-        "Выберите действие",
+        "1. Смотреть анкеты. \n 2. Моя анкета. \n 3. Редактировать профиль",
         reply_markup=kb.main
     )
    
@@ -121,3 +121,31 @@ async def send_message_by_tag(tag, message: Message, state: FSMContext):
             await message.answer(f"{text}", reply_markup=kb_field)
             return
     await message.answer("Не удалось найти поле для изменения.", reply_markup=kb.main)
+
+
+async def make_olymp_buttons(user: api.UserData):
+    olymp_buttons = []
+    print(user)
+    status_map = {
+        0: "Победитель",
+        1: "Призёр",
+        2: "Финалист",
+        3: "Участник"
+    }
+    for olymp in user.get("olymps", []):
+        status_icon = "✅" if olymp.get("is_approved") else "❌"
+        visibility_icon = "👁️" if olymp.get("is_displayed") else ""
+        status_num = olymp.get("result")
+        status_text = status_map.get(status_num, f"Статус {status_num}")
+        year = olymp.get("year", "")
+        button_text = f"{visibility_icon} {status_icon} {olymp.get('name')} ({status_text}, {year})"
+        olymp_buttons.append([types.InlineKeyboardButton(
+            text=button_text, 
+            callback_data=f"toggle_olymp_visibility_{olymp.get('id')}"
+        )])
+    back_button = [types.InlineKeyboardButton(
+        text="Назад",
+        callback_data="update_olymps_visibility_back"
+    )]
+    olymp_buttons.append(back_button)
+    return olymp_buttons
