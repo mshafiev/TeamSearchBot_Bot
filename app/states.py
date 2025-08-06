@@ -15,3 +15,9 @@ class Registration(StatesGroup):
     face_photo = State()
     photo = State()
     
+    
+class AddOlymp(StatesGroup):
+    name = State()
+    profile = State()
+    year = State()
+    result = State()

@@ -42,6 +42,16 @@ who_interested = ReplyKeyboardMarkup(
         resize_keyboard=True,
     )
 
+olymp_result = ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text="Победитель")],
+            [KeyboardButton(text="Призер")],
+            [KeyboardButton(text="Финалист")],
+            [KeyboardButton(text="Участник")],
+        ],
+        resize_keyboard=True,
+    )
+
 my_profile_main = InlineKeyboardMarkup(
     inline_keyboard=[
         [InlineKeyboardButton(text="Редактировать профиль", callback_data="update_profile")],

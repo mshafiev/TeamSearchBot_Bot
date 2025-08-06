@@ -11,7 +11,7 @@ from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton, ReplyKey
 import app.states as st
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
-from api_client import APIClient
+from api_client import APIClient, OlympsData
 import app.keyboards as kb
 import app.functions as func
 from api_client import client, UserData
@@ -197,9 +197,72 @@ async def add_olymp_auto(callback_query: CallbackQuery, state: FSMContext):
 @router.callback_query(F.data == "update_olymps_add_other")
 async def add_olymp_other(callback_query: CallbackQuery, state: FSMContext):
     """
-    Информирует пользователя, что ручное добавление олимпиад пока не реализовано.
+    Запускает ручное добавление олимпиады: спрашивает название.
     """
-    await callback_query.answer("Пока не реализовано")
+    await state.set_state(st.AddOlymp.name)
+    await callback_query.message.answer("Введите название олимпиады:")
+    await callback_query.answer("Добавление олимпиады")
+
+@router.message(st.AddOlymp.name)
+async def olymp_add_name(message: Message, state: FSMContext):
+    """
+    Сохраняет название олимпиады и спрашивает профиль.
+    """
+    await state.update_data(name=message.text)
+    await state.set_state(st.AddOlymp.profile)
+    await message.answer("Введите профиль олимпиады:")
+
+@router.message(st.AddOlymp.profile)
+async def olymp_add_profile(message: Message, state: FSMContext):
+    """
+    Сохраняет профиль олимпиады и спрашивает год.
+    """
+    await state.update_data(profile=message.text)
+    await state.set_state(st.AddOlymp.year)
+    await message.answer("Введите год участия (например, 2023):")
+
+@router.message(st.AddOlymp.year)
+async def olymp_add_year(message: Message, state: FSMContext):
+    """
+    Сохраняет год олимпиады и спрашивает результат.
+    """
+    await state.update_data(year=message.text)
+    await state.set_state(st.AddOlymp.result)
+    await message.answer("Выберите результат:", reply_markup=kb.olymp_result)
+
+@router.message(st.AddOlymp.result)
+async def olymp_add_result(message: Message, state: FSMContext, bot: Bot):
+    """
+    Сохраняет результат олимпиады, отправляет данные на сервер и завершает добавление.
+    """
+    result_map = {
+        "победитель": 0,
+        "призер": 1,
+        "финалист": 2,
+        "участник": 3
+    }
+    result = result_map.get(message.text.lower(), 3)    
+    await state.update_data(result=result)
+    data = await state.get_data()
+    try:
+        olymp = OlympsData(
+            name=data.get("name"),
+            profile=data.get("profile"),
+            year=data.get("year"),
+            result=int(data.get("result")),
+            user_tg_id=message.from_user.id,
+            level=0,  
+            is_displayed=True
+        )
+        client.create_olymp(olymp)
+        await message.answer("Олимпиада успешно добавлена!")
+    except Exception as e:
+        await message.answer(f"Ошибка при добавлении олимпиады")
+    await state.clear()
+    
+    user = client.get_user(tg_id=message.from_user.id)
+    await func.send_user_profile(user, message, bot)
+    await func.send_main_menu(message)
 
 @router.callback_query(F.data == "update_olymps_update_visibility")
 async def update_olymp_visibility(callback_query: CallbackQuery, state: FSMContext):
@@ -230,7 +293,6 @@ async def toggle_olymp_visibility_callback(callback_query: CallbackQuery, state:
 
     result = client.set_olymp_display(olymp_id)
 
-    # Обновляем список олимпиад
     user = client.get_user(user_id)
     olymp_buttons = await func.make_olymp_buttons(user)
     keyboard = types.InlineKeyboardMarkup(inline_keyboard=olymp_buttons)
