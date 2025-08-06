@@ -44,7 +44,7 @@ async def get_user_profile(user):
     if visible_olymps:
         olymp_texts = []
         level_map = {
-            0: "Не Рсош",
+            0: "",
             1: "1",
             2: "2",
             3: "3"
@@ -67,11 +67,10 @@ async def get_user_profile(user):
             else:
                 result_str = str(result)
             olymp_info = (
-                f"<blockquote> {"✅" if olymp.get('is_approved') else "❌"} {olymp.get('name', 'Без названия')} | "
-                f"Профиль: {olymp.get('profile', '-')}, "
-                f"Год: {olymp.get('year', '-')}, "
-                f"Уровень: {level_str}, "
-                f"Результат: {result_str}</blockquote>"
+                f'<blockquote expandable="expandable"> {"✅" if olymp.get("is_approved") else ""} {olymp.get("name", "Без названия")} {olymp.get("year", "-")}| '
+                f'{olymp.get("profile", "-")}, '
+                f'{level_str} уровень, '
+                f'{result_str}</blockquote>'
             )
             # Оформляем как цитату (quote) в Telegram
             olymp_texts.append(olymp_info)
@@ -136,7 +135,7 @@ async def make_olymp_buttons(user: api.UserData):
         3: "Участник"
     }
     for olymp in user.get("olymps", []):
-        status_icon = "✅" if olymp.get("is_approved") else "❌"
+        status_icon = "✅" if olymp.get("is_approved") else "❓"
         visibility_icon = "👁️" if olymp.get("is_displayed") else ""
         status_num = olymp.get("result")
         status_text = status_map.get(status_num, f"Статус {status_num}")
