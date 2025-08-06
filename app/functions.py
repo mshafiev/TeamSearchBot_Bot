@@ -97,14 +97,17 @@ async def update_user_data(user, message: Message, state: FSMContext, bot: Bot):
         await state.clear()
         await message.answer("Твоя анкета выглядит так:")
         await send_user_profile(user, message, bot)
+        await send_main_menu(message)
         return True
     
 async def send_user_profile(user, message: Message, bot: Bot):
     media_group = await get_user_profile(user)
     
     await bot.send_media_group(chat_id=message.chat.id, media=media_group.build())
+
+async def send_main_menu(message: Message):
     await message.answer(
-        "1. Смотреть анкеты. \n 2. Моя анкета. \n 3. Редактировать профиль",
+        "1. Смотреть анкеты. \n2. Моя анкета. \n3. Редактировать профиль",
         reply_markup=kb.main
     )
    
