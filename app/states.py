@@ -9,6 +9,7 @@ class Registration(StatesGroup):
     city = State()
     status = State()
     goal = State()
+    gender = State()
     who_interested = State()
     description = State()
     date_of_birth = State()

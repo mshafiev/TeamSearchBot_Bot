@@ -26,6 +26,7 @@ register_fields = [
                 ("city", st.Registration.city, "В каком городе вы живёте?", kb.ReplyKeyboardRemove()),
                 ("status", st.Registration.status, "Ваш статус: 0 — свободен, 1 — в отношениях", kb.wife_status),
                 ("goal", st.Registration.goal, "Ваша цель: 0 — совместный бот, 1 — общение, 2 — поиск команды, 3 — отношения", kb.goal),
+                ("gender", st.Registration.gender, "Кто вы", kb.gender),
                 ("who_interested", st.Registration.who_interested, "Кто вам интересен: 0 — девушки, 1 — парни, 2 — все", kb.who_interested),
                 ("description", st.Registration.description, "Описание для профиля (например ищу девушку блондинку)", kb.ReplyKeyboardRemove()),
                 ("date_of_birth", st.Registration.date_of_birth, "Ваша дата рождения (ДД-ММ-ГГГГ)", kb.ReplyKeyboardRemove()),
@@ -67,7 +68,7 @@ async def get_user_profile(user):
             else:
                 result_str = str(result)
             olymp_info = (
-                f'<blockquote expandable="expandable"> {"✅" if olymp.get("is_approved") else ""} {olymp.get("name", "Без названия")} {olymp.get("year", "-")}| '
+                f'<blockquote expandable="expandable"> {"✅ " if olymp.get("is_approved") else ""}{olymp.get("name", "Без названия")} {olymp.get("year", "-")}| '
                 f'{olymp.get("profile", "-")}, '
                 f'{level_str} уровень, '
                 f'{result_str}</blockquote>'
@@ -85,7 +86,6 @@ async def get_user_profile(user):
 
 
 async def update_user_data(user, message: Message, state: FSMContext, bot: Bot):
-    print(user)
     if any(value is None for value in user.values()):
             for field, state_field, text, kb_field in register_fields:
                 if user.get(field) is None:

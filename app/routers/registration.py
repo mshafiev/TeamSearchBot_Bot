@@ -221,6 +221,28 @@ async def register_goal(message: Message, state: FSMContext, bot: Bot):
     user = client.get_user(tg_id=message.from_user.id)
     await func.update_user_data(user, message, state, bot)
 
+@router.message(st.Registration.gender)
+async def register_gender(message: Message, state: FSMContext, bot: Bot):
+    """
+    Обработка гендер пользователя.
+    Сохраняет гендер и обновляет данные пользователя.
+    """
+    
+    interested_map = {"парень": False, "девушка": True}
+    gender = interested_map.get(message.text.lower(), False)
+    await state.update_data(gender=gender)
+    try:
+        client.update_user(
+            UserData(
+                tg_id=message.from_user.id,
+                gender=gender,
+            )
+        )
+    except Exception as e:
+        print(e)
+    user = client.get_user(tg_id=message.from_user.id)
+    await func.update_user_data(user, message, state, bot)
+
 @router.message(st.Registration.who_interested)
 async def register_who_interested(message: Message, state: FSMContext, bot: Bot):
     """

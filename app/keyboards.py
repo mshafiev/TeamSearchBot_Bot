@@ -42,6 +42,15 @@ who_interested = ReplyKeyboardMarkup(
         resize_keyboard=True,
     )
 
+
+gender = ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text="Парень")],
+            [KeyboardButton(text="Девушка")],
+        ],
+        resize_keyboard=True,
+    )
+
 olymp_result = ReplyKeyboardMarkup(
         keyboard=[
             [KeyboardButton(text="Победитель")],

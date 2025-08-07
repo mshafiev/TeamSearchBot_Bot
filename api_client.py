@@ -34,6 +34,7 @@ class UserData:
     face_photo_id: Optional[str] = None
     photo_id: Optional[str] = None
     description: Optional[str] = None
+    gender: Optional[bool] = None # 0m 1g
 
 
 @dataclass
