@@ -18,6 +18,7 @@ import app.functions as func
 from app.routers.registration import router as registration_router
 from app.routers.start import router as start_router
 from app.routers.update import router as update_router
+from app.routers.questionnaires import router as questionnaires_router
 
 load_dotenv()
 TOKEN = getenv("BOT_TOKEN")
@@ -33,6 +34,7 @@ async def main() -> None:
     dp.include_router(start_router)
     dp.include_router(registration_router)
     dp.include_router(update_router)
+    dp.include_router(questionnaires_router)
     
     await dp.start_polling(bot)
 

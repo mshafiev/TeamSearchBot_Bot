@@ -22,3 +22,9 @@ class AddOlymp(StatesGroup):
     profile = State()
     year = State()
     result = State()
+    
+
+class ViewingQuestionnaires(StatesGroup):
+    questionnaire = State()
+    reaction = State()
+    message = State()

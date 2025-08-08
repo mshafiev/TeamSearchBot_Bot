@@ -93,3 +93,10 @@ my_profile_edit_olymps = InlineKeyboardMarkup(
         [InlineKeyboardButton(text="Изменить видимость олимпиад", callback_data="update_olymps_update_visibility")],
         [InlineKeyboardButton(text="Назад", callback_data="update_back")],
                      ])
+
+rating_keyboard = ReplyKeyboardMarkup(
+    keyboard=[
+        [KeyboardButton(text="👍"), KeyboardButton(text="👎"), KeyboardButton(text="✏️"), KeyboardButton(text="💤")]
+    ],
+    resize_keyboard=True
+)
