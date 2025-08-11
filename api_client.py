@@ -9,7 +9,7 @@ class OlympsData:
     name: str
     profile: str
     level: int  # 1,2,3, 0-не реш
-    user_tg_id: int
+    user_tg_id: str
     result: int  # 0-победитель, 1-призер, 2-финалист, 3-участник
     year: str
     is_approved: Optional[bool] = False
@@ -19,7 +19,7 @@ class OlympsData:
 @dataclass
 class UserData:
     """Модель данных для пользователя"""
-    tg_id: int
+    tg_id: str
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     middle_name: Optional[str] = None
@@ -40,8 +40,8 @@ class UserData:
 @dataclass
 class LikeData:
     """Модель данных для лайка"""
-    from_user_tg_id: int
-    to_user_tg_id: int
+    from_user_tg_id: str
+    to_user_tg_id: str
     is_like: bool
     text: Optional[str] = None
     is_readed: Optional[bool] = False
@@ -104,7 +104,7 @@ class APIClient:
     
     # ==================== ОЛИМПИАДЫ ====================
     
-    def get_user_olymps(self, user_tg_id: int) -> List[Dict[str, Any]]:
+    def get_user_olymps(self, user_tg_id: str) -> List[Dict[str, Any]]:
         """
         Получить все олимпиады пользователя
         
@@ -164,7 +164,7 @@ class APIClient:
     
     # ==================== ПОЛЬЗОВАТЕЛИ ====================
     
-    def create_user(self, tg_id: int) -> Dict[str, Any]:
+    def create_user(self, tg_id: str) -> Dict[str, Any]:
         """
         Создать нового пользователя
         
@@ -176,7 +176,7 @@ class APIClient:
         """
         return self._make_request("POST", f"/user/create/?tg_id={tg_id}")
     
-    def get_user(self, tg_id: int) -> Dict[str, Any]:
+    def get_user(self, tg_id: str) -> Dict[str, Any]:
         """
         Получить пользователя по tg_id
         
@@ -201,7 +201,7 @@ class APIClient:
         data = {k: v for k, v in user_data.__dict__.items() if v is not None}
         return self._make_request("PUT", "/user/update/", data=data)
     
-    def delete_user(self, tg_id: int) -> Dict[str, Any]:
+    def delete_user(self, tg_id: str) -> Dict[str, Any]:
         """
         Удалить пользователя по tg_id
         
@@ -246,7 +246,7 @@ class APIClient:
         """
         return self._make_request("DELETE", "/like/delete/", params={"id": like_id})
     
-    def set_like_readed(self, from_user_tg_id: int, to_user_tg_id: int) -> Dict[str, Any]:
+    def set_like_readed(self, from_user_tg_id: str, to_user_tg_id: str) -> Dict[str, Any]:
         """
         Изменить статус "прочитано" у лайка
         
@@ -263,7 +263,7 @@ class APIClient:
         }
         return self._make_request("PATCH", "/like/set_read/", params=params)
     
-    def get_last_likes(self, user_tg_id: int, count: int) -> List[Dict[str, Any]]:
+    def get_last_likes(self, user_tg_id: str, count: int) -> List[Dict[str, Any]]:
         """
         Получить последние X лайков пользователя
         
@@ -279,6 +279,28 @@ class APIClient:
             "count": count
         }
         return self._make_request("GET", "/like/get_last/", params=params)
+    
+    def like_exists(self, from_user_tg_id: str, to_user_tg_id: str, is_like: bool = True) -> Dict[str, Any]:
+        """
+        Проверить, существует ли лайк между пользователями
+
+        Args:
+            from_user_tg_id: кто поставил лайк
+            to_user_tg_id: кому поставили лайк
+            is_like: True для лайка, False для дизлайка
+        Returns:
+            {"exists": bool}
+        """
+        params = {
+            "from_user_tg_id": from_user_tg_id,
+            "to_user_tg_id": to_user_tg_id,
+            "is_like": is_like
+        }
+        return self._make_request("GET", "/like/exists/", params=params)
+    
+    def get_incoming_likes(self, user_tg_id: str, only_unread: bool = True, count: int = 50) -> List[Dict[str, Any]]:
+        params = {"user_tg_id": user_tg_id, "only_unread": only_unread, "count": count}
+        return self._make_request("GET", "/like/get_incoming/", params=params)
     
     # ==================== ТЕСТОВЫЙ ЭНДПОИНТ ====================
     
@@ -308,7 +330,7 @@ client = APIClient(f"http://{DB_SERVER_HOST}:{DB_SERVER_PORT}")
 if __name__ == "__main__":
     try:
         result = client.create_olymp(OlympsData(
-            user_tg_id=1008114047,
+            user_tg_id="1008114047",
             name = "Всероссийская междисциплинарная олимпиада школьников 8-11 класса «Национальная технологическая олимпиада»",
             profile = "виртуальные миры: разработка компьютерных игр, технологии виртуальной реальности, технологии дополненной реальности",
             level = 3,
@@ -322,14 +344,14 @@ if __name__ == "__main__":
         print(e)
     
     # try:
-    #     result = client.get_user(tg_id=1008114047)
+    #     result = client.get_user(tg_id="1008114047")
     #     print(result)
     # except Exception as e:
     #     print(e)
         
     # client.update_user(
     #         UserData(
-    #             tg_id=1008114047,
+    #             tg_id="1008114047",
     #             photo_id="test",
     #         )
     #     )

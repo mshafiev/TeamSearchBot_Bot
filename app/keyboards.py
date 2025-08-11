@@ -96,7 +96,22 @@ my_profile_edit_olymps = InlineKeyboardMarkup(
 
 rating_keyboard = ReplyKeyboardMarkup(
     keyboard=[
-        [KeyboardButton(text="👍"), KeyboardButton(text="👎"), KeyboardButton(text="✏️"), KeyboardButton(text="💤")]
+        [KeyboardButton(text="👍"), KeyboardButton(text="👎"), KeyboardButton(text="💤"), KeyboardButton(text="✏️")]
+    ],
+    resize_keyboard=True
+)
+
+incoming_likes_keyboard = ReplyKeyboardMarkup(
+    keyboard=[
+        [KeyboardButton(text="Показать, кому я понравился(ась) ❤️")],
+        [KeyboardButton(text="Назад в меню")]
+    ],
+    resize_keyboard=True
+)
+
+incoming_like_reaction_keyboard = ReplyKeyboardMarkup(
+    keyboard=[
+        [KeyboardButton(text="Лайкнуть в ответ"), KeyboardButton(text="Пропустить")]
     ],
     resize_keyboard=True
 )

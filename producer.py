@@ -26,8 +26,8 @@ connection_params = ConnectionParameters(
 
 
 async def send_like_message(
-    from_user_tg_id: int,
-    to_user_tg_id: int,
+    from_user_tg_id: str,
+    to_user_tg_id: str,
     text: Optional[str] = None,
     is_like: bool = False,
     is_readed: bool = False
@@ -36,8 +36,8 @@ async def send_like_message(
     Отправляет сообщение о лайке/дизлайке в RabbitMQ.
     
     Args:
-        from_user_tg_id: ID пользователя, который отправляет лайк
-        to_user_tg_id: ID пользователя, которому отправляется лайк
+        from_user_tg_id: Telegram ID пользователя, который отправляет лайк (строка)
+        to_user_tg_id: Telegram ID пользователя, которому отправляется лайк (строка)
         text: Текст сообщения (опционально)
         is_like: True для лайка, False для дизлайка
         is_readed: Статус прочтения сообщения
@@ -73,8 +73,8 @@ async def send_like_message(
 def main():
     # Пример использования
     success = send_like_message(
-        from_user_tg_id=1,
-        to_user_tg_id=10,
+        from_user_tg_id="1",
+        to_user_tg_id="10",
         text="Привет!",
         is_like=True,
         is_readed=False

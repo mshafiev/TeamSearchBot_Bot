@@ -20,13 +20,19 @@ async def command_start_handler(message: Message, state: FSMContext, bot: Bot) -
     Обработчик команды /start
     Проверяет наличие пользователя в БД и предлагает регистрацию
     """
-    user_id = message.from_user.id
+    user_id = str(message.from_user.id)
     print(user_id)
 
     user = client.get_user(tg_id=user_id)
     
     if user:
         await func.update_user_data(user, message, state, bot)
+        try:
+            incoming = client.get_incoming_likes(user_tg_id=user_id, only_unread=True, count=1)
+            if incoming:
+                await message.answer("Хотите посмотреть, кому вы понравились?", reply_markup=kb.incoming_likes_keyboard)
+        except Exception:
+            pass
     else:
         try:
             user = client.create_user(tg_id=user_id)

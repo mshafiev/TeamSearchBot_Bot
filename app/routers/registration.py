@@ -40,13 +40,13 @@ async def register_first_name(message: Message, state: FSMContext, bot: Bot):
     try:
         client.update_user(
             UserData(
-                tg_id=message.from_user.id,
+                tg_id=str(message.from_user.id),
                 first_name=message.text[:20],
             )
         )
     except Exception as e:
         print(e)
-    user = client.get_user(tg_id=message.from_user.id)
+    user = client.get_user(tg_id=str(message.from_user.id))
     await func.update_user_data(user, message, state, bot)
 
 @router.message(st.Registration.last_name)
@@ -59,13 +59,13 @@ async def register_last_name(message: Message, state: FSMContext, bot: Bot):
     try:
         client.update_user(
             UserData(
-                tg_id=message.from_user.id,
+                tg_id=str(message.from_user.id),
                 last_name=message.text[:20],
             )
         )
     except Exception as e:
         print(e)
-    user = client.get_user(tg_id=message.from_user.id)
+    user = client.get_user(tg_id=str(message.from_user.id))
     await func.update_user_data(user, message, state, bot)
 
 @router.message(st.Registration.middle_name)
@@ -79,13 +79,13 @@ async def register_middle_name(message: Message, state: FSMContext, bot: Bot):
     try:
         client.update_user(
             UserData(
-                tg_id=message.from_user.id,
+                tg_id=str(message.from_user.id),
                 middle_name=middle_name[:20],
             )
         )
     except Exception as e:
         print(e)
-    user = client.get_user(tg_id=message.from_user.id)
+    user = client.get_user(tg_id=str(message.from_user.id))
     await func.update_user_data(user, message, state, bot)
 
 @router.message(st.Registration.phone)
@@ -103,13 +103,13 @@ async def register_phone(message: Message, state: FSMContext, bot: Bot):
     try:
         client.update_user(
             UserData(
-                tg_id=message.from_user.id,
+                tg_id=str(message.from_user.id),
                 phone=message.contact.phone_number,
             )
         )
     except Exception as e:
         print(e)
-    user = client.get_user(tg_id=message.from_user.id)
+    user = client.get_user(tg_id=str(message.from_user.id))
     await func.update_user_data(user, message, state, bot)
 
 @router.message(st.Registration.description)
@@ -122,13 +122,13 @@ async def register_description(message: Message, state: FSMContext, bot: Bot):
     try:
         client.update_user(
             UserData(
-                tg_id=message.from_user.id,
+                tg_id=str(message.from_user.id),
                 description=message.text[:200],
             )
         )
     except Exception as e:
         print(e)
-    user = client.get_user(tg_id=message.from_user.id)
+    user = client.get_user(tg_id=str(message.from_user.id))
     await func.update_user_data(user, message, state, bot)
 
 @router.message(st.Registration.age)
@@ -148,13 +148,13 @@ async def register_age(message: Message, state: FSMContext, bot: Bot):
         try:
             client.update_user(
                 UserData(
-                    tg_id=message.from_user.id,
+                    tg_id=str(message.from_user.id),
                     age=message.text,
                 )
             )
         except Exception as e:
             print(e)
-        user = client.get_user(tg_id=message.from_user.id)
+        user = client.get_user(tg_id=str(message.from_user.id))
         await func.update_user_data(user, message, state, bot)
     except ValueError:
         await message.answer("Пожалуйста, введи число. Попробуй еще раз:")
@@ -170,13 +170,13 @@ async def register_city(message: Message, state: FSMContext, bot: Bot):
     try:
         client.update_user(
             UserData(
-                tg_id=message.from_user.id,
+                tg_id=str(message.from_user.id),
                 city=message.text[:20],
             )
         )
     except Exception as e:
         print(e)
-    user = client.get_user(tg_id=message.from_user.id)
+    user = client.get_user(tg_id=str(message.from_user.id))
     await func.update_user_data(user, message, state, bot)
 
 @router.message(st.Registration.status)
@@ -191,13 +191,13 @@ async def register_status(message: Message, state: FSMContext, bot: Bot):
     try:
         client.update_user(
             UserData(
-                tg_id=message.from_user.id,
+                tg_id=str(message.from_user.id),
                 status=status,
             )
         )
     except Exception as e:
         print(e)
-    user = client.get_user(tg_id=message.from_user.id)
+    user = client.get_user(tg_id=str(message.from_user.id))
     await func.update_user_data(user, message, state, bot)
 
 @router.message(st.Registration.goal)
@@ -212,13 +212,13 @@ async def register_goal(message: Message, state: FSMContext, bot: Bot):
     try:
         client.update_user(
             UserData(
-                tg_id=message.from_user.id,
+                tg_id=str(message.from_user.id),
                 goal=goal,
             )
         )
     except Exception as e:
         print(e)
-    user = client.get_user(tg_id=message.from_user.id)
+    user = client.get_user(tg_id=str(message.from_user.id))
     await func.update_user_data(user, message, state, bot)
 
 @router.message(st.Registration.gender)
@@ -234,13 +234,13 @@ async def register_gender(message: Message, state: FSMContext, bot: Bot):
     try:
         client.update_user(
             UserData(
-                tg_id=message.from_user.id,
+                tg_id=str(message.from_user.id),
                 gender=gender,
             )
         )
     except Exception as e:
         print(e)
-    user = client.get_user(tg_id=message.from_user.id)
+    user = client.get_user(tg_id=str(message.from_user.id))
     await func.update_user_data(user, message, state, bot)
 
 @router.message(st.Registration.who_interested)
@@ -255,13 +255,13 @@ async def register_who_interested(message: Message, state: FSMContext, bot: Bot)
     try:
         client.update_user(
             UserData(
-                tg_id=message.from_user.id,
+                tg_id=str(message.from_user.id),
                 who_interested=who_interested,
             )
         )
     except Exception as e:
         print(e)
-    user = client.get_user(tg_id=message.from_user.id)
+    user = client.get_user(tg_id=str(message.from_user.id))
     await func.update_user_data(user, message, state, bot)
 
 @router.message(st.Registration.date_of_birth)
@@ -281,13 +281,13 @@ async def register_date_of_birth(message: Message, state: FSMContext, bot: Bot):
         try:
             client.update_user(
                 UserData(
-                    tg_id=message.from_user.id,
+                    tg_id=str(message.from_user.id),
                     date_of_birth=message.text,
                 )
             )
         except Exception as e:
             print(e)
-        user = client.get_user(tg_id=message.from_user.id)
+        user = client.get_user(tg_id=str(message.from_user.id))
         await func.update_user_data(user, message, state, bot)
     except (ValueError, IndexError):
         await message.answer(
@@ -310,13 +310,13 @@ async def register_selfi(message: Message, state: FSMContext, bot: Bot):
     try:
         client.update_user(
             UserData(
-                tg_id=message.from_user.id,
+                tg_id=str(message.from_user.id),
                 face_photo_id=file_id,
             )
         )
     except Exception as e:
         print(e)
-    user = client.get_user(tg_id=message.from_user.id)
+    user = client.get_user(tg_id=str(message.from_user.id))
     await func.update_user_data(user, message, state, bot)
 
 @router.message(st.Registration.photo)
@@ -334,11 +334,11 @@ async def register_photo(message: Message, state: FSMContext, bot: Bot):
     try:
         client.update_user(
             UserData(
-                tg_id=message.from_user.id,
+                tg_id=str(message.from_user.id),
                 photo_id=file_id,
             )
         )
     except Exception as e:
         print(e)
-    user = client.get_user(tg_id=message.from_user.id)
+    user = client.get_user(tg_id=str(message.from_user.id))
     await func.update_user_data(user, message, state, bot)

@@ -28,3 +28,7 @@ class ViewingQuestionnaires(StatesGroup):
     questionnaire = State()
     reaction = State()
     message = State()
+
+class IncomingLikes(StatesGroup):
+    asking = State()  # показать ли входящие лайки
+    viewing = State()  # показываем входящие по одному

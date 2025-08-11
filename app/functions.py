@@ -104,6 +104,13 @@ async def send_user_profile(user, message: Message, bot: Bot):
     
     await bot.send_media_group(chat_id=message.chat.id, media=media_group.build())
 
+async def send_user_profile_to_chat(user, chat_id: str, bot: Bot):
+    """
+    Отправляет профиль пользователю по chat_id без объекта Message.
+    """
+    media_group = await get_user_profile(user)
+    await bot.send_media_group(chat_id=chat_id, media=media_group.build())
+
 async def send_main_menu(message: Message):
     await message.answer(
         "1. Смотреть анкеты. \n2. Моя анкета. \n3. Редактировать профиль",

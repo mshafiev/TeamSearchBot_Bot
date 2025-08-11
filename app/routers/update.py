@@ -23,7 +23,7 @@ async def show_profile(message: Message, state: FSMContext, bot: Bot):
     """
     Отправляет пользователю его профиль.
     """
-    user = client.get_user(tg_id=message.from_user.id)
+    user = client.get_user(tg_id=str(message.from_user.id))
     await func.send_user_profile(user, message, bot)
     await func.send_main_menu(message)
 
@@ -189,52 +189,34 @@ async def update_photo_callback(callback_query: CallbackQuery, state: FSMContext
 
 @router.callback_query(F.data == "update_olymps_add_auto")
 async def add_olymp_auto(callback_query: CallbackQuery, state: FSMContext):
-    """
-    Запускает автоматическую проверку олимпиад пользователя.
-    """
     await callback_query.answer("Проверка началась, обычно это длится пару минут. Мы напишем вам как только закончим")
 
 @router.callback_query(F.data == "update_olymps_add_other")
 async def add_olymp_other(callback_query: CallbackQuery, state: FSMContext):
-    """
-    Запускает ручное добавление олимпиады: спрашивает название.
-    """
     await state.set_state(st.AddOlymp.name)
     await callback_query.message.answer("Введите название олимпиады:")
     await callback_query.answer("Добавление олимпиады")
 
 @router.message(st.AddOlymp.name)
 async def olymp_add_name(message: Message, state: FSMContext):
-    """
-    Сохраняет название олимпиады и спрашивает профиль.
-    """
     await state.update_data(name=message.text)
     await state.set_state(st.AddOlymp.profile)
     await message.answer("Введите профиль олимпиады:")
 
 @router.message(st.AddOlymp.profile)
 async def olymp_add_profile(message: Message, state: FSMContext):
-    """
-    Сохраняет профиль олимпиады и спрашивает год.
-    """
     await state.update_data(profile=message.text)
     await state.set_state(st.AddOlymp.year)
     await message.answer("Введите год участия (например, 2023):")
 
 @router.message(st.AddOlymp.year)
 async def olymp_add_year(message: Message, state: FSMContext):
-    """
-    Сохраняет год олимпиады и спрашивает результат.
-    """
     await state.update_data(year=message.text)
     await state.set_state(st.AddOlymp.result)
     await message.answer("Выберите результат:", reply_markup=kb.olymp_result)
 
 @router.message(st.AddOlymp.result)
 async def olymp_add_result(message: Message, state: FSMContext, bot: Bot):
-    """
-    Сохраняет результат олимпиады, отправляет данные на сервер и завершает добавление.
-    """
     result_map = {
         "победитель": 0,
         "призер": 1,
@@ -250,7 +232,7 @@ async def olymp_add_result(message: Message, state: FSMContext, bot: Bot):
             profile=data.get("profile"),
             year=data.get("year"),
             result=int(data.get("result")),
-            user_tg_id=message.from_user.id,
+            user_tg_id=str(message.from_user.id),
             level=0,  
             is_displayed=True
         )
@@ -260,16 +242,13 @@ async def olymp_add_result(message: Message, state: FSMContext, bot: Bot):
         await message.answer(f"Ошибка при добавлении олимпиады")
     await state.clear()
     
-    user = client.get_user(tg_id=message.from_user.id)
+    user = client.get_user(tg_id=str(message.from_user.id))
     await func.send_user_profile(user, message, bot)
     await func.send_main_menu(message)
 
 @router.callback_query(F.data == "update_olymps_update_visibility")
 async def update_olymp_visibility(callback_query: CallbackQuery, state: FSMContext):
-    """
-    Показывает меню управления видимостью олимпиад пользователя.
-    """
-    user_id = callback_query.from_user.id
+    user_id = str(callback_query.from_user.id)
     user = client.get_user(user_id)
     olymp_buttons = await func.make_olymp_buttons(user)
     keyboard = types.InlineKeyboardMarkup(inline_keyboard=olymp_buttons)
@@ -277,19 +256,13 @@ async def update_olymp_visibility(callback_query: CallbackQuery, state: FSMConte
 
 @router.callback_query(F.data == "update_olymps_visibility_back")
 async def update_olymp_visibility_back(callback_query: CallbackQuery, state: FSMContext):
-    """
-    Возвращает пользователя в меню редактирования олимпиад.
-    """
     await callback_query.message.edit_text("Меню олимпиад:", reply_markup=kb.my_profile_edit_olymps)
     await callback_query.answer("Вы вернулись в меню олимпиад")
 
 @router.callback_query(F.data.startswith("toggle_olymp_visibility_"))
 async def toggle_olymp_visibility_callback(callback_query: CallbackQuery, state: FSMContext):
-    """
-    Переключает видимость конкретной олимпиады пользователя.
-    """
     olymp_id = callback_query.data.replace("toggle_olymp_visibility_", "")
-    user_id = callback_query.from_user.id
+    user_id = str(callback_query.from_user.id)
 
     result = client.set_olymp_display(olymp_id)
 
