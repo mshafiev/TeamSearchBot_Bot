@@ -9,6 +9,7 @@ from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton, ReplyKey
 from aiogram.fsm.context import FSMContext
 import app.keyboards as kb
 import app.functions as func
+from app import texts
 
 from api_client import client
 
@@ -16,35 +17,30 @@ router = Router()
 
 @router.message(CommandStart())
 async def command_start_handler(message: Message, state: FSMContext, bot: Bot) -> None:
-    """
-    Обработчик команды /start
-    Проверяет наличие пользователя в БД и предлагает регистрацию
-    """
     user_id = str(message.from_user.id)
-    print(user_id)
-
-    user = client.get_user(tg_id=user_id)
+    user = None
+    try:
+        user = client.get_user(tg_id=user_id)
+    except Exception:
+        user = None
     
     if user:
         await func.update_user_data(user, message, state, bot)
         try:
             incoming = client.get_incoming_likes(user_tg_id=user_id, only_unread=True, count=1)
             if incoming:
-                await message.answer("Хотите посмотреть, кому вы понравились?", reply_markup=kb.incoming_likes_keyboard)
+                await message.answer(texts.WELCOME_EXISTING_USER_INCOMING_PROMPT, reply_markup=kb.incoming_likes_keyboard)
         except Exception:
             pass
     else:
         try:
             user = client.create_user(tg_id=user_id)
-        except:
-            await message.answer("На сервере произошла ошибка")
+        except Exception:
+            await message.answer(texts.ERROR_SERVER)
             return
 
         await message.answer(
-            f"Привет, {html.bold(message.from_user.full_name)}!\n"
-            f"Добро пожаловать в бот знакомств!\n"
-            f"Для начала работы нужно пройти регистрацию.\n"
-            f"Нажми на кнопку ниже, чтобы начать:",
+            texts.WELCOME_NEW_USER.format(name=html.bold(message.from_user.full_name)),
             reply_markup=kb.start_reg,
         )
 

@@ -4,6 +4,9 @@ import json
 from typing import Optional
 from dotenv import load_dotenv
 import logging
+import asyncio
+
+from app.validators import is_valid_user_id, validate_message_text
 
 
 logging.getLogger("pika").setLevel(logging.WARNING)
@@ -25,6 +28,23 @@ connection_params = ConnectionParameters(
 )
 
 
+def _send_like_message_sync(message_data: dict) -> bool:
+    try:
+        with BlockingConnection(connection_params) as conn:
+            with conn.channel() as ch:
+                ch.queue_declare(queue="likes")
+                ch.basic_publish(
+                    exchange="",
+                    routing_key="likes",
+                    body=json.dumps(message_data)
+                )
+                logging.info("Like message enqueued: %s", message_data)
+                return True
+    except Exception as exc:
+        logging.error("RMQ publish failed: %s", exc)
+        return False
+
+
 async def send_like_message(
     from_user_tg_id: str,
     to_user_tg_id: str,
@@ -33,58 +53,48 @@ async def send_like_message(
     is_readed: bool = False
 ) -> bool:
     """
-    Отправляет сообщение о лайке/дизлайке в RabbitMQ.
-    
-    Args:
-        from_user_tg_id: Telegram ID пользователя, который отправляет лайк (строка)
-        to_user_tg_id: Telegram ID пользователя, которому отправляется лайк (строка)
-        text: Текст сообщения (опционально)
-        is_like: True для лайка, False для дизлайка
-        is_readed: Статус прочтения сообщения
-    
-    Returns:
-        bool: True если сообщение отправлено успешно, False в случае ошибки
+    Enqueue like/dislike event to RabbitMQ without blocking the event loop.
+    Validates user ids and message text.
     """
-    message_data = {
-        "from_user_tg_id": from_user_tg_id,
-        "to_user_tg_id": to_user_tg_id,
-        "text": text,
-        "is_like": is_like,
-        "is_readed": is_readed
-    }
-    
-    try:
-        with BlockingConnection(connection_params) as conn:
-            with conn.channel() as ch:
-                ch.queue_declare(queue="likes")
-                
-                ch.basic_publish(
-                    exchange="",
-                    routing_key="likes",
-                    body=json.dumps(message_data)
-                )
-                print(f"Message sent: {message_data}")
-                return True
-    except Exception as e:
-        print(f"Error sending message: {e}")
+    if not is_valid_user_id(from_user_tg_id) or not is_valid_user_id(to_user_tg_id):
+        logging.warning(
+            "Invalid user ids for like message: from=%s to=%s",
+            from_user_tg_id,
+            to_user_tg_id,
+        )
         return False
+
+    ok, cleaned_text = validate_message_text(text)
+    message_text = cleaned_text if ok else None
+
+    message_data = {
+        "from_user_tg_id": str(from_user_tg_id),
+        "to_user_tg_id": str(to_user_tg_id),
+        "text": message_text,
+        "is_like": bool(is_like),
+        "is_readed": bool(is_readed),
+    }
+
+    return await asyncio.to_thread(_send_like_message_sync, message_data)
 
 
 def main():
-    # Пример использования
-    success = send_like_message(
-        from_user_tg_id="1",
-        to_user_tg_id="10",
-        text="Привет!",
-        is_like=True,
-        is_readed=False
+    # Example usage (synchronous context)
+    success = asyncio.run(
+        send_like_message(
+            from_user_tg_id="1",
+            to_user_tg_id="10",
+            text="Привет!",
+            is_like=True,
+            is_readed=False,
+        )
     )
-    
+
     if success:
         print("Message sent successfully")
     else:
         print("Failed to send message")
-            
-            
+
+
 if __name__ == "__main__":
     main()
