@@ -146,6 +146,7 @@ async def send_message_with_like(message: Message, state: FSMContext, bot: Bot):
 async def show_next_profile(message: Message, state: FSMContext, bot: Bot):
     ex = client.get_last_likes(str(message.from_user.id), 3)
     excluded_ids = [e['to_user_tg_id'] for e in ex] if ex else []
+    print(excluded_ids)
     user_id = str(message.from_user.id)
     recommendation = recsys.get_recommendation(user_id, excluded_ids)
     if recommendation:
@@ -198,6 +199,13 @@ async def like_back_incoming(message: Message, state: FSMContext, bot: Bot):
         await message.answer(texts.ERROR_NOTHING_TO_LIKE, reply_markup=kb.main)
         await state.clear()
         return
+    
+    # Отмечаем лайк как прочитанный
+    try:
+        client.set_like_readed(from_user_tg_id=str(from_id), to_user_tg_id=str(message.from_user.id))
+    except Exception:
+        pass
+    
     exists_resp = client.like_exists(from_user_tg_id=str(from_id), to_user_tg_id=str(message.from_user.id), is_like=True)
     is_mutual = bool(exists_resp.get("exists"))
     if is_mutual:
@@ -227,6 +235,16 @@ async def like_back_incoming(message: Message, state: FSMContext, bot: Bot):
 
 @router.message(IncomingLikes.viewing, F.text == "Пропустить")
 async def skip_incoming_like(message: Message, state: FSMContext, bot: Bot):
+    data = await state.get_data()
+    from_id = data.get("current_incoming_from_id")
+    
+    # Отмечаем лайк как прочитанный
+    if is_valid_user_id(from_id):
+        try:
+            client.set_like_readed(from_user_tg_id=str(from_id), to_user_tg_id=str(message.from_user.id))
+        except Exception:
+            pass
+    
     await show_next_incoming_like(message, state, bot)
 
 @router.message(IncomingLikes.viewing, F.text == "Назад в меню")
