@@ -24,7 +24,7 @@ class UserData:
     last_name: Optional[str] = None
     middle_name: Optional[str] = None
     phone: Optional[str] = None
-    phone_verified: Optional[bool] = False
+    username: Optional[str] = None
     age: Optional[int] = None
     city: Optional[str] = None
     status: Optional[int] = None  # 0-свободен / 1-в отношениях

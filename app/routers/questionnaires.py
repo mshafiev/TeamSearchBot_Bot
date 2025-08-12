@@ -213,13 +213,13 @@ async def like_back_incoming(message: Message, state: FSMContext, bot: Bot):
         other = client.get_user(tg_id=str(from_id))
         await message.answer(texts.MUTUAL_LIKE)
         await func.send_user_profile(other, message, bot)
-        if other.get("phone"):
-            await message.answer(texts.PHONE_OF_USER.format(phone=other["phone"]))
+        if other.get("username"):
+            await message.answer(texts.PHONE_OF_USER.format(phone=other["username"]))
         try:
             await safe_send_message(bot, chat_id=str(from_id), text=texts.MUTUAL_LIKE)
             await func.send_user_profile_to_chat(me, chat_id=str(from_id), bot=bot)
-            if me.get("phone"):
-                await safe_send_message(bot, chat_id=str(from_id), text=texts.PHONE_OF_USER.format(phone=me["phone"]))
+            if me.get("username"):
+                await safe_send_message(bot, chat_id=str(from_id), text=texts.PHONE_OF_USER.format(phone=me["username"]))
         except Exception:
             pass
     else:

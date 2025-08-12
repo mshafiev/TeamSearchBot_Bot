@@ -11,7 +11,8 @@ import app.keyboards as kb
 import app.functions as func
 from app import texts
 
-from api_client import client
+
+from api_client import client, UserData
 
 router = Router()
 
@@ -35,6 +36,14 @@ async def command_start_handler(message: Message, state: FSMContext, bot: Bot) -
     else:
         try:
             user = client.create_user(tg_id=user_id)
+        except Exception:
+            await message.answer(texts.ERROR_SERVER)
+            return
+        try:
+            user = client.update_user(user_data=UserData(
+                tg_id=user_id,
+                username=message.from_user.username if message.from_user.username else "None"
+                                                         ))
         except Exception:
             await message.answer(texts.ERROR_SERVER)
             return
