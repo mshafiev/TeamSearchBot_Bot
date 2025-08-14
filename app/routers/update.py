@@ -16,6 +16,7 @@ import app.keyboards as kb
 import app.functions as func
 from api_client import client, UserData
 from app import texts
+from producer import send_olymp_for_verification
 
 router = Router()
 
@@ -120,6 +121,15 @@ async def update_photo_callback(callback_query: CallbackQuery, state: FSMContext
 
 @router.callback_query(F.data == "update_olymps_add_auto")
 async def add_olymp_auto(callback_query: CallbackQuery, state: FSMContext):
+    user_data = client.get_user(tg_id=str(callback_query.from_user.id))
+    await send_olymp_for_verification(
+        first_name=user_data.get('first_name'),
+        last_name=user_data.get('last_name'),
+        middle_name=user_data.get('middle_name'),
+        date_of_birth=user_data.get('date_of_birth'),
+        user_tg_id=str(callback_query.from_user.id)
+    )
+    await callback_query.message.answer(texts.OLYMP_CHECK_STARTED)
     await callback_query.answer(texts.OLYMP_CHECK_STARTED)
 
 @router.callback_query(F.data == "update_olymps_add_other")
