@@ -22,8 +22,8 @@ from app.routers.questionnaires import router as questionnaires_router
 
 load_dotenv()
 TOKEN = getenv("BOT_TOKEN")
-DB_SERVER_HOST = getenv("DB_SERVER_HOST")
-DB_SERVER_PORT = getenv("DB_SERVER_PORT")
+DB_SERVER_HOST = getenv("DB_SERVER_HOST", "db-api")
+DB_SERVER_PORT = getenv("DB_SERVER_PORT", "8005")
 
 client = APIClient(f"http://{DB_SERVER_HOST}:{DB_SERVER_PORT}")
 

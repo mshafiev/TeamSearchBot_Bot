@@ -4,8 +4,8 @@ from os import getenv
 from dotenv import load_dotenv
 
 load_dotenv()
-RECSYS_SERVER_HOST = getenv("RECSYS_SERVER_HOST", "localhost")
-RECSYS_SERVER_PORT = getenv("RECSYS_SERVER_PORT", "8001")
+RECSYS_SERVER_HOST = getenv("RECSYS_SERVER_HOST", "recsys")
+RECSYS_SERVER_PORT = getenv("RECSYS_SERVER_PORT", "8000")
 
 class RecSysClient:
     def __init__(self, base_url: Optional[str] = None):
