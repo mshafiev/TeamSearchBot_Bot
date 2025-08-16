@@ -42,7 +42,7 @@ async def command_start_handler(message: Message, state: FSMContext, bot: Bot) -
         try:
             user = client.update_user(user_data=UserData(
                 tg_id=user_id,
-                username=message.from_user.username if message.from_user.username else "None"
+                username=message.from_user.username if message.from_user.username else "нет айди"
                                                          ))
         except Exception:
             await message.answer(texts.ERROR_SERVER)
