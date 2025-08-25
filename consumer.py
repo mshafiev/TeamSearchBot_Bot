@@ -1,69 +1,40 @@
-from pika import ConnectionParameters, BlockingConnection, PlainCredentials
-import os
-from dotenv import load_dotenv
+import asyncio
 import json
+import os
+from aio_pika import connect, IncomingMessage
 from aiogram import Bot
-from os import getenv
-from dotenv import load_dotenv
-from aiogram import Bot, Dispatcher, html, F, types
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
+from dotenv import load_dotenv
 from app import texts
-import asyncio
 
 load_dotenv()
-
-RMQ_USER = os.getenv("RMQ_USER")
-RMQ_PASS = os.getenv("RMQ_PASS")
-RMQ_HOST = os.getenv("RMQ_HOST")
-RMQ_PORT = int(os.getenv("RMQ_PORT", 5672))
-DB_HOST = os.getenv("DB_SERVER_HOST")
-DB_PORT = os.getenv("DB_SERVER_PORT")
-
-credentials = PlainCredentials(RMQ_USER, RMQ_PASS)
-
-connection_params = ConnectionParameters(
-    host=RMQ_HOST,
-    port=RMQ_PORT,
-    credentials=credentials,
-)
-
-load_dotenv()
-TOKEN = getenv("BOT_TOKEN")
-
-
+TOKEN = os.getenv("BOT_TOKEN")
 bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 
-loop = asyncio.new_event_loop()
-asyncio.set_event_loop(loop)
+
+async def on_message(message: IncomingMessage):
+    async with message.process():
+        data = json.loads(message.body)
+        tg_id = int(data.get("user_id", ""))
+        await bot.send_message(chat_id=tg_id, text=texts.OLYMP_CHECK_SUCCESS)
 
 
-async def send_message(tg_id: int):
-    await bot.send_message(
-        chat_id=tg_id,
-        text=texts.OLYMP_CHECK_SUCCESS
-    )
+async def main():
+    RMQ_USER = os.getenv("RMQ_USER")
+    RMQ_PASS = os.getenv("RMQ_PASS")
+    RMQ_HOST = os.getenv("RMQ_HOST")
+    RMQ_PORT = int(os.getenv("RMQ_PORT", 5672))
 
+    connection = await connect(f"amqp://{RMQ_USER}:{RMQ_PASS}@{RMQ_HOST}:{RMQ_PORT}/")
+    channel = await connection.channel()
+    queue = await channel.declare_queue("olymps_success", durable=True)
 
-def callback(ch, method, properties, body):
-    try:
-        data = json.loads(body)
-        tg_id = data.get("user_id", "")
-        loop.create_task(send_message(tg_id))
-        ch.basic_ack(delivery_tag=method.delivery_tag)
-    except Exception as e:
-       print(e)
+    await queue.consume(on_message)
+    print(" [*] Waiting for messages...")
 
-def main():
-    with BlockingConnection(connection_params) as conn:
-        with conn.channel() as ch:
-            ch.queue_declare(queue="olymps_success")
+    await asyncio.Future()  # вечный таск
 
-            ch.basic_consume(
-                queue="olymps_success",
-                on_message_callback=callback,
-            )
-            ch.start_consuming()
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
