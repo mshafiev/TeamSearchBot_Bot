@@ -71,11 +71,11 @@ async def get_user_profile(user):
             olymp_texts.append(olymp_info)
         caption += "\n\nОлимпиады:\n" + "\n".join(olymp_texts)
     status_map = {
-            0: "Отношений нет",
-            1: "Есть отношения",
+            0: "В отношениях",
+            1: "Не в отношениях",
         }
     status_str = status_map.get(user.get('status', 'Не указано'), 'Не указано')
-    caption += f"\nСтатус: {status_str}"
+    caption += f"\n({status_str})"
     media_group = MediaGroupBuilder(caption=caption)
     if user.get('face_photo_id'):
         media_group.add_photo(media=user.get('face_photo_id'))
