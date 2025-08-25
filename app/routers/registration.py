@@ -144,7 +144,7 @@ async def register_city(message: Message, state: FSMContext, bot: Bot):
 
 @router.message(st.Registration.status)
 async def register_status(message: Message, state: FSMContext, bot: Bot):
-    status_map = {"нет": 0, "в отношениях": 1, "влюблен": 2}
+    status_map = {"Нет отношений": 0, "В отношениях": 1}
     status = status_map.get(message.text.lower(), 0)
     await state.update_data(status=status)
     try:

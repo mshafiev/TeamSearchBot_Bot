@@ -16,7 +16,6 @@ get_number = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text='Отправи�
 wife_status = ReplyKeyboardMarkup(
         keyboard=[
             [KeyboardButton(text="Нет отношений")],
-            [KeyboardButton(text="Влюблен")],
             [KeyboardButton(text="В отношениях")],
         ],
         resize_keyboard=True,
@@ -35,8 +34,8 @@ goal = ReplyKeyboardMarkup(
 
 who_interested = ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="Женщины")],
-            [KeyboardButton(text="Мужчины")],
+            [KeyboardButton(text="Девушки")],
+            [KeyboardButton(text="Парни")],
             [KeyboardButton(text="Все")],
         ],
         resize_keyboard=True,
