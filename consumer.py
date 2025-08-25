@@ -34,14 +34,22 @@ TOKEN = getenv("BOT_TOKEN")
 
 bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 
+loop = asyncio.new_event_loop()
+asyncio.set_event_loop(loop)
+
+
+async def send_message(tg_id: int):
+    await bot.send_message(
+        chat_id=tg_id,
+        text=texts.OLYMP_CHECK_SUCCESS
+    )
+
+
 def callback(ch, method, properties, body):
     try:
         data = json.loads(body)
         tg_id = data.get("user_id", "")
-        asyncio.run(bot.send_message(
-            chat_id=int(tg_id),
-            text=texts.OLYMP_CHECK_SUCCESS
-        ))
+        loop.create_task(send_message(tg_id))
         ch.basic_ack(delivery_tag=method.delivery_tag)
     except Exception as e:
        print(e)
