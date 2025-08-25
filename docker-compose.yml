@@ -18,7 +18,7 @@ services:
 
   consumer:
     build: .
-    command: python3 consumer.py
+    command: python consumer.py
     volumes:
       - .:/app
     restart: unless-stopped

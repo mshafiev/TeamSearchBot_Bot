@@ -10,12 +10,6 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from app import texts
 
-from app.routers.registration import router as registration_router
-from app.routers.start import router as start_router
-from app.routers.update import router as update_router
-from app.routers.questionnaires import router as questionnaires_router
-
-
 load_dotenv()
 
 RMQ_USER = os.getenv("RMQ_USER")
@@ -47,6 +41,7 @@ def callback(ch, method, properties, body):
             chat_id=int(tg_id),  
             text=texts.OLYMP_CHECK_SUCCESS
         )
+        ch.basic_ack(delivery_tag=method.delivery_tag)
     except Exception as e:
        print(e)
 
