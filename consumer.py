@@ -28,7 +28,7 @@ async def main():
 
     connection = await connect(f"amqp://{RMQ_USER}:{RMQ_PASS}@{RMQ_HOST}:{RMQ_PORT}/")
     channel = await connection.channel()
-    queue = await channel.declare_queue("olymps_success", durable=True)
+    queue = await channel.declare_queue("olymps_success")
 
     await queue.consume(on_message)
     print(" [*] Waiting for messages...")
