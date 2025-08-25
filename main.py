@@ -14,11 +14,13 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from api_client import APIClient
 import app.keyboards as kb
 import app.functions as func
+from app.scheduler import NotificationScheduler
 
 from app.routers.registration import router as registration_router
 from app.routers.start import router as start_router
 from app.routers.update import router as update_router
 from app.routers.questionnaires import router as questionnaires_router
+from app.routers.admin import router as admin_router
 
 load_dotenv()
 TOKEN = getenv("BOT_TOKEN")
@@ -35,8 +37,17 @@ async def main() -> None:
     dp.include_router(registration_router)
     dp.include_router(update_router)
     dp.include_router(questionnaires_router)
+    dp.include_router(admin_router)
     
-    await dp.start_polling(bot)
+    # Инициализируем и запускаем планировщик уведомлений
+    scheduler = NotificationScheduler(bot, client)
+    await scheduler.start()
+    
+    try:
+        await dp.start_polling(bot)
+    finally:
+        # Останавливаем планировщик при завершении работы
+        await scheduler.stop()
 
 
 if __name__ == "__main__":

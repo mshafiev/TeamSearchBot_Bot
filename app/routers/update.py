@@ -30,6 +30,12 @@ async def show_profile(message: Message, state: FSMContext, bot: Bot):
 async def show_profile_edit_menu(message: Message, state: FSMContext):
     await message.answer(texts.EDIT_PROFILE_TITLE, reply_markup=kb.my_profile_main)
 
+
+@router.callback_query(F.data == "delete_account")
+async def delete_account(callback_query: CallbackQuery, state: FSMContext, bot: Bot):
+    client.delete_user(callback_query.message.chat.id)
+    bot.send_message(chat_id=callback_query.message.chat.id, text="Аккаунт удален. Нажмите /start для начала работы")
+
 @router.callback_query(F.data == "update_profile")
 async def show_profile_edit_keyboard(callback_query: CallbackQuery, state: FSMContext, bot: Bot):
     await bot.edit_message_reply_markup(

@@ -188,6 +188,15 @@ class APIClient:
         """
         return self._make_request("GET", f"/user/get/{tg_id}")
     
+    def get_all_users(self) -> List[Dict[str, Any]]:
+        """
+        Получить всех пользователей
+        
+        Returns:
+            Список всех пользователей
+        """
+        return self._make_request("GET", "/users/all")
+    
     def update_user(self, user_data: UserData) -> Dict[str, Any]:
         """
         Обновить данные пользователя

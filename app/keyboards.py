@@ -65,6 +65,7 @@ my_profile_main = InlineKeyboardMarkup(
     inline_keyboard=[
         [InlineKeyboardButton(text="Редактировать профиль", callback_data="update_profile")],
         [InlineKeyboardButton(text="Редактировать олимпиады", callback_data="update_olymps")],
+        [InlineKeyboardButton(text="Удалить аккаунт", callback_data="delete_account")],
                      ])
 
 my_profile_edit_profile = InlineKeyboardMarkup(

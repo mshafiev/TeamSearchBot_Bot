@@ -55,6 +55,10 @@ async def get_user_profile(user):
             2: "Финалист",
             3: "Участник"
         }
+        status_map = {
+            0: "Отношений нет",
+            1: "Есть отношения",
+        }
         for olymp in visible_olymps:
             level = olymp.get('level', '-')
             level_str = level_map.get(level, str(level)) if isinstance(level, int) else str(level)
@@ -69,6 +73,8 @@ async def get_user_profile(user):
             olymp_texts.append(olymp_info)
         caption += "\n\nОлимпиады:\n" + "\n".join(olymp_texts)
 
+    status_str = result_map.get(result, str(result)) if isinstance(result, int) else str(result)
+    caption += f"\n\Стутс: {status_str}"
     media_group = MediaGroupBuilder(caption=caption)
     if user.get('face_photo_id'):
         media_group.add_photo(media=user.get('face_photo_id'))
