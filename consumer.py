@@ -9,6 +9,7 @@ from aiogram import Bot, Dispatcher, html, F, types
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from app import texts
+import asyncio
 
 load_dotenv()
 
@@ -33,14 +34,14 @@ TOKEN = getenv("BOT_TOKEN")
 
 bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 
-async def callback(ch, method, properties, body):
+def callback(ch, method, properties, body):
     try:
         data = json.loads(body)
         tg_id = data.get("user_id", "")
-        await bot.send_message(
-            chat_id=int(tg_id),  
+        asyncio.run(bot.send_message(
+            chat_id=int(tg_id),
             text=texts.OLYMP_CHECK_SUCCESS
-        )
+        ))
         ch.basic_ack(delivery_tag=method.delivery_tag)
     except Exception as e:
        print(e)
