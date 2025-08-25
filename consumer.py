@@ -33,11 +33,11 @@ TOKEN = getenv("BOT_TOKEN")
 
 bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 
-def callback(ch, method, properties, body):
+async def callback(ch, method, properties, body):
     try:
         data = json.loads(body)
         tg_id = data.get("user_id", "")
-        bot.send_message(
+        await bot.send_message(
             chat_id=int(tg_id),  
             text=texts.OLYMP_CHECK_SUCCESS
         )
