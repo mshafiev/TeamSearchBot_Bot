@@ -1,22 +1,20 @@
 from aiogram.types import ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
 
 
-start_without_all_fields = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text='Дозаполнить анкету')],
-                                     ], resize_keyboard=True, input_field_placeholder="Заполните анкету до конца")
+start_without_all_fields = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text='дозаполнить анкету')],
+                                     ], resize_keyboard=True, input_field_placeholder="заполни анкету до конца")
 
-start_reg = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text='Заполнить анкету')],
-                                     ], resize_keyboard=True, input_field_placeholder="Заполните анкету для использования бота")
+start_reg = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text='создать профиль')],
+                                     ], resize_keyboard=True, input_field_placeholder="создай анкету для использования бота")
 
-main = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text='Смотреть анкеты 🚀'), KeyboardButton(text='2 👤'), KeyboardButton(text='3 ✏️')],
+main = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text='🚀'), KeyboardButton(text='👤'), KeyboardButton(text='✏️')],
                                      ], resize_keyboard=True)
 
-get_number = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text='Отправить телефон', request_contact=True)],
-                                     ], resize_keyboard=True)
 
 wife_status = ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="Нет отношений")],
-            [KeyboardButton(text="В отношениях")],
+            [KeyboardButton(text="свободен(а)🔓")],
+            [KeyboardButton(text="в отношениях 🔐")],
         ],
         resize_keyboard=True,
     )
@@ -24,19 +22,19 @@ wife_status = ReplyKeyboardMarkup(
 
 goal = ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="Совместный бот")],
-            [KeyboardButton(text="Общение")],
-            [KeyboardButton(text="Поиск команды")],
-            [KeyboardButton(text="Отношения")],
+            [KeyboardButton(text="совместный бот 📚")],
+            [KeyboardButton(text="общение 💬")],
+            [KeyboardButton(text="поиск команды 👥")],
+            [KeyboardButton(text="отношения 💞")],
         ],
         resize_keyboard=True,
     )
 
 who_interested = ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="Девушки")],
-            [KeyboardButton(text="Парни")],
-            [KeyboardButton(text="Все")],
+            [KeyboardButton(text="девушки 💋")],
+            [KeyboardButton(text="парни 🎩")],
+            [KeyboardButton(text="все")],
         ],
         resize_keyboard=True,
     )
@@ -44,17 +42,17 @@ who_interested = ReplyKeyboardMarkup(
 
 gender = ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="Парень")],
-            [KeyboardButton(text="Девушка")],
+            [KeyboardButton(text="парень")],
+            [KeyboardButton(text="девушка")],
         ],
         resize_keyboard=True,
     )
 
 olymp_result = ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="Победитель")],
-            [KeyboardButton(text="Призер")],
-            [KeyboardButton(text="Финалист")],
+            [KeyboardButton(text="победитель🥇")],
+            [KeyboardButton(text="призер🥈")],
+            [KeyboardButton(text="финалист")],
             [KeyboardButton(text="Участник")],
         ],
         resize_keyboard=True,
@@ -62,41 +60,40 @@ olymp_result = ReplyKeyboardMarkup(
 
 my_profile_main = InlineKeyboardMarkup(
     inline_keyboard=[
-        [InlineKeyboardButton(text="Редактировать профиль", callback_data="update_profile")],
-        [InlineKeyboardButton(text="Редактировать олимпиады", callback_data="update_olymps")],
-        [InlineKeyboardButton(text="Удалить аккаунт", callback_data="delete_account")],
+        [InlineKeyboardButton(text="редактировать профиль", callback_data="update_profile")],
+        [InlineKeyboardButton(text="редактировать достижения", callback_data="update_olymps")],
+        [InlineKeyboardButton(text="удалить аккаунт ❌", callback_data="delete_account")],
                      ])
 
 my_profile_edit_profile = InlineKeyboardMarkup(
     inline_keyboard=[
-        [InlineKeyboardButton(text="Имя", callback_data="update_profile_update_first_name")],
-        [InlineKeyboardButton(text="Фамилия", callback_data="update_profile_update_last_name")],
-        [InlineKeyboardButton(text="Отчество", callback_data="update_profile_update_middle_name")],
-        [InlineKeyboardButton(text="Телефон", callback_data="update_profile_update_phone")],
-        [InlineKeyboardButton(text="Возраст", callback_data="update_profile_update_age")],
-        [InlineKeyboardButton(text="Город", callback_data="update_profile_update_city")],
-        [InlineKeyboardButton(text="Статус", callback_data="update_profile_update_status")],
-        [InlineKeyboardButton(text="Цель", callback_data="update_profile_update_goal")],
-        [InlineKeyboardButton(text="Кто интересен", callback_data="update_profile_update_who_interested")],
-        [InlineKeyboardButton(text="Описание", callback_data="update_profile_update_description")],
-        [InlineKeyboardButton(text="Дата рождения", callback_data="update_profile_update_date_of_birth")],
-        [InlineKeyboardButton(text="Селфи (фото лица)", callback_data="update_profile_update_face_photo")],
-        [InlineKeyboardButton(text="Доп. фото", callback_data="update_profile_update_photo")],
+        [InlineKeyboardButton(text="имя", callback_data="update_profile_update_first_name")],
+        [InlineKeyboardButton(text="фамилия", callback_data="update_profile_update_last_name")],
+        [InlineKeyboardButton(text="отчество", callback_data="update_profile_update_middle_name")],
+        [InlineKeyboardButton(text="возраст", callback_data="update_profile_update_age")],
+        [InlineKeyboardButton(text="город", callback_data="update_profile_update_city")],
+        [InlineKeyboardButton(text="статус", callback_data="update_profile_update_status")],
+        [InlineKeyboardButton(text="цель", callback_data="update_profile_update_goal")],
+        [InlineKeyboardButton(text="кто интересен", callback_data="update_profile_update_who_interested")],
+        [InlineKeyboardButton(text="описание профиля", callback_data="update_profile_update_description")],
+        [InlineKeyboardButton(text="дата рождения", callback_data="update_profile_update_date_of_birth")],
+        [InlineKeyboardButton(text="селфи (фото лица)", callback_data="update_profile_update_face_photo")],
+        [InlineKeyboardButton(text="доп. фото", callback_data="update_profile_update_photo")],
         [InlineKeyboardButton(text="Назад", callback_data="update_back")],
     ]
 )
 
 my_profile_edit_olymps = InlineKeyboardMarkup(
     inline_keyboard=[
-        [InlineKeyboardButton(text="Добавить РСОШ/ВСОШ (авто)", callback_data="update_olymps_add_auto")],
-        [InlineKeyboardButton(text="Добавить другую олимпиаду", callback_data="update_olymps_add_other")],
-        [InlineKeyboardButton(text="Изменить видимость олимпиад", callback_data="update_olymps_update_visibility")],
+        [InlineKeyboardButton(text="добавить РСОШ 📄 (авто) ", callback_data="update_olymps_add_auto")],
+        [InlineKeyboardButton(text="добавить другое достижение🏅", callback_data="update_olymps_add_other")],
+        [InlineKeyboardButton(text="изменить видимость достижений👁", callback_data="update_olymps_update_visibility")],
         [InlineKeyboardButton(text="Назад", callback_data="update_back")],
                      ])
 
 rating_keyboard = ReplyKeyboardMarkup(
     keyboard=[
-        [KeyboardButton(text="👍"), KeyboardButton(text="👎"), KeyboardButton(text="💤"), KeyboardButton(text="✏️")]
+        [KeyboardButton(text="❤️"), KeyboardButton(text="👎"), KeyboardButton(text="💬"),  KeyboardButton(text="главное меню")]
     ],
     resize_keyboard=True
 )
@@ -111,7 +108,7 @@ incoming_likes_keyboard = ReplyKeyboardMarkup(
 
 incoming_like_reaction_keyboard = ReplyKeyboardMarkup(
     keyboard=[
-        [KeyboardButton(text="Лайкнуть в ответ"), KeyboardButton(text="Пропустить")]
+        [KeyboardButton(text="💋"), KeyboardButton(text="👎")]
     ],
     resize_keyboard=True
 )

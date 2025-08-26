@@ -27,7 +27,7 @@ from app.utils import safe_send_message
 router = Router()
 recsys = RecSysClient()
 
-@router.message(F.text.lower() == "смотреть анкеты 🚀")
+@router.message(F.text.lower() == "🚀")
 async def view_questionnaires(message: Message, state: FSMContext, bot: Bot):
     user_id = str(message.from_user.id)
     user = client.get_user(tg_id=user_id)
@@ -47,7 +47,7 @@ async def view_questionnaires(message: Message, state: FSMContext, bot: Bot):
     else:
         await message.answer(texts.NO_MATCHES_AVAILABLE)
 
-@router.message(st.ViewingQuestionnaires.questionnaire, F.text == "👍")
+@router.message(st.ViewingQuestionnaires.questionnaire, F.text == "❤️")
 async def like_profile(message: Message, state: FSMContext, bot: Bot):
     data = await state.get_data()
     current_user_id = data.get("current_user_id")
@@ -109,12 +109,12 @@ async def dislike_profile(message: Message, state: FSMContext, bot: Bot):
     await message.answer(texts.DISLIKE_SENT)
     await show_next_profile(message, state, bot)
 
-@router.message(st.ViewingQuestionnaires.questionnaire, F.text == "💤")
+@router.message(st.ViewingQuestionnaires.questionnaire, F.text == "главное меню")
 async def go_back(message: Message, state: FSMContext, bot: Bot):
     await state.clear()
     await message.answer(texts.MAIN_MENU_TITLE, reply_markup=kb.main)
 
-@router.message(st.ViewingQuestionnaires.questionnaire, F.text == "✏️")
+@router.message(st.ViewingQuestionnaires.questionnaire, F.text == "💬")
 async def start_message_mode(message: Message, state: FSMContext, bot: Bot):
     await state.set_state(st.ViewingQuestionnaires.message)
     await message.answer(texts.ASK_CUSTOM_MESSAGE, reply_markup=ReplyKeyboardRemove())
@@ -139,8 +139,30 @@ async def send_message_with_like(message: Message, state: FSMContext, bot: Bot):
         is_like=True,
         is_readed=False
     )
-    await state.set_state(st.ViewingQuestionnaires.questionnaire)
-    await message.answer(texts.LIKE_WITH_MESSAGE_SENT)
+    await safe_send_message(bot, chat_id=current_user_id, text=texts.SOMEONE_LIKED_YOU, reply_markup=kb.incoming_likes_keyboard)
+
+    try:
+        exists_resp = client.like_exists(from_user_tg_id=str(current_user_id), to_user_tg_id=str(message.from_user.id), is_like=True)
+        is_mutual = bool(exists_resp.get("exists"))
+    except Exception:
+        is_mutual = False
+
+    if is_mutual:
+        me = client.get_user(tg_id=str(message.from_user.id))
+        other = client.get_user(tg_id=str(current_user_id))
+        await message.answer(texts.MUTUAL_LIKE)
+        await func.send_user_profile(other, message, bot)
+        if other.get("username"):
+            await message.answer(texts.PHONE_OF_USER.format(phone=other["username"]))
+        try:
+            await safe_send_message(bot, chat_id=current_user_id, text=texts.MUTUAL_LIKE)
+            dummy_msg = types.Message(message_id=0, date=message.date, chat=message.chat)
+            await func.send_user_profile(me, dummy_msg, bot)
+            if me.get("username"):
+                await safe_send_message(bot, chat_id=current_user_id, text=texts.PHONE_OF_USER.format(phone=me["username"]))
+        except Exception:
+            pass
+
     await show_next_profile(message, state, bot)
 
 async def show_next_profile(message: Message, state: FSMContext, bot: Bot):
@@ -189,9 +211,13 @@ async def show_next_incoming_like(message: Message, state: FSMContext, bot: Bot)
         pass
     await state.update_data(current_incoming_from_id=from_id)
     await func.send_user_profile(liker, message, bot)
+    try:
+        await message.answer("Сообщение для тебя:\n"+like.get("text"))
+    except:
+        pass
     await message.answer(texts.INCOMING_LIKE_ASK_BACK, reply_markup=incoming_like_reaction_keyboard)
 
-@router.message(IncomingLikes.viewing, F.text == "Лайкнуть в ответ")
+@router.message(IncomingLikes.viewing, F.text == "💋")
 async def like_back_incoming(message: Message, state: FSMContext, bot: Bot):
     data = await state.get_data()
     from_id = data.get("current_incoming_from_id")
@@ -233,7 +259,7 @@ async def like_back_incoming(message: Message, state: FSMContext, bot: Bot):
         await message.answer(texts.LIKE_SENT)
     await show_next_incoming_like(message, state, bot)
 
-@router.message(IncomingLikes.viewing, F.text == "Пропустить")
+@router.message(IncomingLikes.viewing, F.text == "👎")
 async def skip_incoming_like(message: Message, state: FSMContext, bot: Bot):
     data = await state.get_data()
     from_id = data.get("current_incoming_from_id")

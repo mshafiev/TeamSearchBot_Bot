@@ -20,13 +20,13 @@ from producer import send_olymp_for_verification
 
 router = Router()
 
-@router.message(F.text.lower() == "2 👤")
+@router.message(F.text.lower() == "👤")
 async def show_profile(message: Message, state: FSMContext, bot: Bot):
     user = client.get_user(tg_id=str(message.from_user.id))
     await func.send_user_profile(user, message, bot)
     await func.send_main_menu(message)
 
-@router.message(F.text.lower() == "3 ✏️")
+@router.message(F.text.lower() == "✏️")
 async def show_profile_edit_menu(message: Message, state: FSMContext):
     await message.answer(texts.EDIT_PROFILE_TITLE, reply_markup=kb.my_profile_main)
 
@@ -54,7 +54,7 @@ async def show_olymps_edit_keyboard(callback_query: CallbackQuery, state: FSMCon
 
 @router.callback_query(F.data == "update_back")
 async def back_to_profile_menu(callback_query: CallbackQuery, state: FSMContext, bot: Bot):
-    await callback_query.message.edit_text(texts.EDIT_PROFILE_TITLE + ":", reply_markup=kb.my_profile_main)
+    await callback_query.message.edit_text(texts.EDIT_PROFILE_TITLE, reply_markup=kb.my_profile_main)
 
 # ------- Профиль -------
 
@@ -141,34 +141,34 @@ async def add_olymp_auto(callback_query: CallbackQuery, state: FSMContext):
 @router.callback_query(F.data == "update_olymps_add_other")
 async def add_olymp_other(callback_query: CallbackQuery, state: FSMContext):
     await state.set_state(st.AddOlymp.name)
-    await callback_query.message.answer("Введите название олимпиады:")
+    await callback_query.message.answer("название олимпиады:")
     await callback_query.answer("Добавление олимпиады")
 
 @router.message(st.AddOlymp.name)
 async def olymp_add_name(message: Message, state: FSMContext):
     await state.update_data(name=message.text)
     await state.set_state(st.AddOlymp.profile)
-    await message.answer("Введите профиль олимпиады:")
+    await message.answer("профиль олимпиады:")
 
 @router.message(st.AddOlymp.profile)
 async def olymp_add_profile(message: Message, state: FSMContext):
     await state.update_data(profile=message.text)
     await state.set_state(st.AddOlymp.year)
-    await message.answer("Введите год участия (например, 2023):")
+    await message.answer("год участия\n <blockquote>например, 2023</blockquote>")
 
 @router.message(st.AddOlymp.year)
 async def olymp_add_year(message: Message, state: FSMContext):
     await state.update_data(year=message.text)
     await state.set_state(st.AddOlymp.result)
-    await message.answer("Выберите результат:", reply_markup=kb.olymp_result)
+    await message.answer("результат:", reply_markup=kb.olymp_result)
 
 @router.message(st.AddOlymp.result)
 async def olymp_add_result(message: Message, state: FSMContext, bot: Bot):
     result_map = {
-        "победитель": 0,
-        "призер": 1,
+        "победитель🥇": 0,
+        "призер🥈": 1,
         "финалист": 2,
-        "участник": 3
+        "Участник": 3
     }
     result = result_map.get(message.text.lower(), 3)    
     await state.update_data(result=result)

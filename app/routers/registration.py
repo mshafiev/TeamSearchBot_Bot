@@ -20,7 +20,7 @@ from app.validators import parse_age, parse_date_dmy
 
 router = Router()
 
-@router.message(F.text.lower() == "заполнить анкету")
+@router.message(F.text.lower() == "создать профиль")
 async def register_start(message: Message, state: FSMContext, bot: Bot):
     await state.set_state(st.Registration.first_name)
     await message.answer(texts.ASK_FIRST_NAME, reply_markup=ReplyKeyboardRemove())
@@ -71,23 +71,6 @@ async def register_middle_name(message: Message, state: FSMContext, bot: Bot):
     user = client.get_user(tg_id=str(message.from_user.id))
     await func.update_user_data(user, message, state, bot)
 
-@router.message(st.Registration.phone)
-async def register_phone(message: Message, state: FSMContext, bot: Bot):
-    if not message.contact:
-        await message.answer(texts.ERR_NEED_CONTACT_BUTTON)
-        return
-    await state.update_data(phone=message.contact.phone_number)
-    try:
-        client.update_user(
-            UserData(
-                tg_id=str(message.from_user.id),
-                phone=message.contact.phone_number,
-            )
-        )
-    except Exception as e:
-        print(e)
-    user = client.get_user(tg_id=str(message.from_user.id))
-    await func.update_user_data(user, message, state, bot)
 
 @router.message(st.Registration.description)
 async def register_description(message: Message, state: FSMContext, bot: Bot):
@@ -144,7 +127,7 @@ async def register_city(message: Message, state: FSMContext, bot: Bot):
 
 @router.message(st.Registration.status)
 async def register_status(message: Message, state: FSMContext, bot: Bot):
-    status_map = {"Нет отношений": 0, "В отношениях": 1}
+    status_map = {"свободен(а)🔓": 0, "в отношениях 🔐": 1}
     status = status_map.get(message.text.lower(), 0)
     await state.update_data(status=status)
     try:
@@ -161,7 +144,7 @@ async def register_status(message: Message, state: FSMContext, bot: Bot):
 
 @router.message(st.Registration.goal)
 async def register_goal(message: Message, state: FSMContext, bot: Bot):
-    goal_map = {"совместный бот": 0, "общение": 1, "поиск команды": 2, "отношения": 3}
+    goal_map = {"совместный бот 📚": 0, "общение 💬": 1, "поиск команды 👥": 2, "отношения 💞": 3}
     goal = goal_map.get(message.text.lower(), 1)
     await state.update_data(goal=goal)
     try:
@@ -195,7 +178,7 @@ async def register_gender(message: Message, state: FSMContext, bot: Bot):
 
 @router.message(st.Registration.who_interested)
 async def register_who_interested(message: Message, state: FSMContext, bot: Bot):
-    interested_map = {"женщины": 0, "мужчины": 1, "все": 2}
+    interested_map = {"девушки 💋": 0, "парни 🎩": 1, "все": 2}
     who_interested = interested_map.get(message.text.lower(), 2)
     await state.update_data(who_interested=who_interested)
     try:

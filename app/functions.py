@@ -23,7 +23,6 @@ register_fields = [
                 ("first_name", st.Registration.first_name, texts.ASK_FIRST_NAME, kb.ReplyKeyboardRemove()),
                 ("last_name", st.Registration.last_name, texts.ASK_LAST_NAME, kb.ReplyKeyboardRemove()),
                 ("middle_name", st.Registration.middle_name, texts.ASK_MIDDLE_NAME, kb.ReplyKeyboardRemove()),
-                ("phone", st.Registration.phone, texts.ASK_PHONE, kb.get_number),
                 ("age", st.Registration.age, texts.ASK_AGE, kb.ReplyKeyboardRemove()),
                 ("city", st.Registration.city, texts.ASK_CITY, kb.ReplyKeyboardRemove()),
                 ("status", st.Registration.status, texts.ASK_STATUS, kb.wife_status),
@@ -38,6 +37,7 @@ register_fields = [
 
 
 async def get_user_profile(user):
+    print(user)
     caption = f"{html.bold(user.get('first_name', 'Не указано'))}, {user.get('age', 'Не указано')}, {user.get('city', 'Не указано')} - {user.get('description', 'Не указано')}"
     olymps = user.get('olymps', [])
     visible_olymps = [o for o in olymps if o.get('is_displayed')]
@@ -71,11 +71,11 @@ async def get_user_profile(user):
             olymp_texts.append(olymp_info)
         caption += "\n\nОлимпиады:\n" + "\n".join(olymp_texts)
     status_map = {
-            0: "В отношениях",
-            1: "Не в отношениях",
+            0: "в отношениях",
+            1: "не в отношениях",
         }
     status_str = status_map.get(user.get('status', 'Не указано'), 'Не указано')
-    caption += f"\n({status_str})"
+    caption += f"\n\n<i>Статус: {status_str}</i>"
     media_group = MediaGroupBuilder(caption=caption)
     if user.get('face_photo_id'):
         media_group.add_photo(media=user.get('face_photo_id'))

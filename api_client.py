@@ -23,7 +23,6 @@ class UserData:
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     middle_name: Optional[str] = None
-    phone: Optional[str] = None
     username: Optional[str] = None
     age: Optional[int] = None
     city: Optional[str] = None
