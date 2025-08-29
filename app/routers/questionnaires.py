@@ -121,6 +121,7 @@ async def start_message_mode(message: Message, state: FSMContext, bot: Bot):
 
 @router.message(st.ViewingQuestionnaires.message)
 async def send_message_with_like(message: Message, state: FSMContext, bot: Bot):
+    await state.set_state(st.ViewingQuestionnaires.questionnaire)
     data = await state.get_data()
     current_user_id = data.get("current_user_id")
     if not is_valid_user_id(current_user_id):
@@ -166,7 +167,8 @@ async def send_message_with_like(message: Message, state: FSMContext, bot: Bot):
     await show_next_profile(message, state, bot)
 
 async def show_next_profile(message: Message, state: FSMContext, bot: Bot):
-    ex = client.get_last_likes(str(message.from_user.id), 3)
+    ex = client.get_last_likes(str(message.from_user.id), 25)
+    print(ex)
     excluded_ids = [e['to_user_tg_id'] for e in ex] if ex else []
     print(excluded_ids)
     user_id = str(message.from_user.id)

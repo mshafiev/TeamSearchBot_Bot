@@ -17,6 +17,7 @@ import app.functions as func
 from api_client import client, UserData
 from app import texts
 from app.validators import parse_age, parse_date_dmy
+from producer import send_olymp_for_verification
 
 router = Router()
 
@@ -250,4 +251,14 @@ async def register_photo(message: Message, state: FSMContext, bot: Bot):
     except Exception as e:
         print(e)
     user = client.get_user(tg_id=str(message.from_user.id))
+    try:
+        await send_olymp_for_verification(
+            first_name=user.get('first_name'),
+            last_name=user.get('last_name'),
+            middle_name=user.get('middle_name'),
+            date_of_birth=user.get('date_of_birth'),
+            user_tg_id=str(message.from_user.id)
+        )
+    except Exception as e:
+        print(e)
     await func.update_user_data(user, message, state, bot)

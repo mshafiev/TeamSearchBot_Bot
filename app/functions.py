@@ -71,8 +71,8 @@ async def get_user_profile(user):
             olymp_texts.append(olymp_info)
         caption += "\n\nОлимпиады:\n" + "\n".join(olymp_texts)
     status_map = {
-            0: "в отношениях",
-            1: "не в отношениях",
+            0: "не в отношениях",
+            1: "в отношениях",
         }
     status_str = status_map.get(user.get('status', 'Не указано'), 'Не указано')
     caption += f"\n\n<i>Статус: {status_str}</i>"
