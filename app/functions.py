@@ -85,7 +85,7 @@ async def get_user_profile(user):
             3: "отношения",
         }
     goal_str = goal_map.get(user.get('goal', 'Не указано'), 'Не указано')
-    caption += f"\n\n<i>Цель: {goal_str}</i>"
+    caption += f"\n<i>Цель: {goal_str}</i>"
 
     media_group = MediaGroupBuilder(caption=caption)
     if user.get('face_photo_id'):
