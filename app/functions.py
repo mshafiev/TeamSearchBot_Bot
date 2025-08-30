@@ -37,7 +37,6 @@ register_fields = [
 
 
 async def get_user_profile(user):
-    print(user)
     caption = f"{html.bold(user.get('first_name', 'Не указано'))}, {user.get('age', 'Не указано')}, {user.get('city', 'Не указано')} - {user.get('description', 'Не указано')}"
     olymps = user.get('olymps', [])
     visible_olymps = [o for o in olymps if o.get('is_displayed')]

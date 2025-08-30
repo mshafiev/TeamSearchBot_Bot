@@ -31,7 +31,7 @@ recsys = RecSysClient()
 async def view_questionnaires(message: Message, state: FSMContext, bot: Bot):
     user_id = str(message.from_user.id)
     user = client.get_user(tg_id=user_id)
-    ex = client.get_last_likes(user_id, 3)
+    ex = client.get_last_likes(user_id, 25)
     excluded = [e['to_user_tg_id'] for e in ex] if ex else []
     recommendation = recsys.get_recommendation(user_id, excluded)
     if recommendation:
@@ -168,9 +168,7 @@ async def send_message_with_like(message: Message, state: FSMContext, bot: Bot):
 
 async def show_next_profile(message: Message, state: FSMContext, bot: Bot):
     ex = client.get_last_likes(str(message.from_user.id), 25)
-    print(ex)
     excluded_ids = [e['to_user_tg_id'] for e in ex] if ex else []
-    print(excluded_ids)
     user_id = str(message.from_user.id)
     recommendation = recsys.get_recommendation(user_id, excluded_ids)
     if recommendation:
