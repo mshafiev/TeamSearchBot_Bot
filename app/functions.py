@@ -70,12 +70,23 @@ async def get_user_profile(user):
             )
             olymp_texts.append(olymp_info)
         caption += "\n\nОлимпиады:\n" + "\n".join(olymp_texts)
+
     status_map = {
             0: "не в отношениях",
             1: "в отношениях",
         }
     status_str = status_map.get(user.get('status', 'Не указано'), 'Не указано')
     caption += f"\n\n<i>Статус: {status_str}</i>"
+
+    goal_map = {
+            0: "совместный бот",
+            1: "общение",
+            2: "поиск команды",
+            3: "отношения",
+        }
+    goal_str = goal_map.get(user.get('goal', 'Не указано'), 'Не указано')
+    caption += f"\n\n<i>Цель: {goal_str}</i>"
+
     media_group = MediaGroupBuilder(caption=caption)
     if user.get('face_photo_id'):
         media_group.add_photo(media=user.get('face_photo_id'))
